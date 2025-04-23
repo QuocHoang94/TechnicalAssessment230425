@@ -48,9 +48,9 @@ export class PracticeFormPage {
         await (await this.input_userEmail()).fill(information.email);
         if (mobileNumber === 1) {
             await (await this.input_userNumber_mobile()).fill(information.mobileNumber);
-          } else {
+        } else {
             await (await this.input_userNumber_mobile()).fill("");
-          }
+        }
         // await (await this.input_userNumber_mobile()).fill(information.mobileNumber);
         await (await this.select_gender(information.gender[0])).click();
         await (await this.select_hobbies(information.hobbies[0])).click();
@@ -68,13 +68,23 @@ export class PracticeFormPage {
         await (await this.btn_Submit()).click();
     }
 
+    async getCurrentDateFormatted(): Promise<string> {
+        const today: Date = new Date();
+        const options: Intl.DateTimeFormatOptions = {
+            day: '2-digit',
+            month: 'long',
+            year: 'numeric'
+        };
+        return today.toLocaleDateString('en-GB', options).replace(/ (\d{4})$/, ',$1');
+    }
+
     async verifySubmitPracticeFormSuccess() {
         await expect(await this.div_header_submitFormSuccess()).toBeVisible();
-         const expectedData = {
+        const expectedData = {
             "Student Name": "Luis Van",
             "Gender": "Male",
             "Mobile": "0912345678",
-            "Date of Birth": "22 April,2025",
+            "Date of Birth": await this.getCurrentDateFormatted(),
             "Hobbies": "Sports",
             "Picture": "test1.png",
             "Address": "123 Nguyen Van Cu, Hanoi",
@@ -82,7 +92,7 @@ export class PracticeFormPage {
         };
         for (const [label, value] of Object.entries(expectedData)) {
             await expect(await this.table_dialogSubmit(label)).toHaveText(value);
-          }
+        }
     }
 
     async verifySubmitPracticeFormUnSuccess() {
